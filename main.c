@@ -6,21 +6,21 @@ typedef struct Patient
 {
     int age;
     char name[30];
-    char patient_id[6];
+    char patient_id[7];
     struct Patient *next;
 } Patient;
 
 Patient *head = NULL;
 Patient *tail = NULL;
 Patient *temp;
-char *patient_id;
+
 
 char *generateIDForNewPatient(int age)
 {
     static int ID_COUNT = 1001;
     char ageString[3];
     char idString[5];
-    patient_id = malloc(7);
+    char * patient_id = malloc(7);
     sprintf(idString, "%d", ID_COUNT++);
     sprintf(ageString, "%d", age);
     strcpy(patient_id, idString);
@@ -104,7 +104,7 @@ struct Patient *callPriorityPatient()
         return head;
     else
         printf("Patient List EMPTY.\n");
-    return 0;
+    return NULL;
 }
 
 void printWaitingList()
@@ -116,24 +116,28 @@ void printWaitingList()
     }
     else
     {
-        temp = head;
+		printf("\n----------------------------------\n");
+		printf("%5s\t%10s\t%5s","ID","NAME","AGE");
+        printf("\n----------------------------------\n");
+		temp = head;
         while (temp->next != NULL)
         {
-            printf("%d: %s [ %d ]\n", temp->patient_id, temp->name, temp->age);
+            printf(" %-7s\t%-15s\t%3d\n", temp->patient_id, temp->name, temp->age);
             temp = temp->next;
         }
-        printf("%d. %s [ %d ]\n", temp->patient_id, temp->name, temp->age);
+        printf(" %-7s\t%-15s\t%3d\n", temp->patient_id, temp->name, temp->age);
     }
 }
 
 void printMenu()
 {
-    printf("\nHow may I help you ? \n");
+    printf("\n--------------------------\n");
     printf("1. Register New Patient. \n");
     printf("2. Print Patient List.\n");
     printf("3. Call Priority Patient.\n");
     printf("4. Exit Application.\n");
-    printf("\nPlease Enter a choice: ");
+    printf("--------------------------\n");
+    printf("Please Enter a choice: ");
 }
 
 char *registerPatient(char name[30], int age)
@@ -152,8 +156,10 @@ void nextPatient()
 {
     // finding the most priority patient
     Patient *priorityPatient = callPriorityPatient();
-    printf("Patient-%s: %s [ %d ] DISCHARGED\n", priorityPatient->patient_id, priorityPatient->name, priorityPatient->age);
-    removePriorityPatient();
+    if(priorityPatient!=NULL){
+        printf("Patient-%s: DISCHARGED\n", priorityPatient->patient_id);
+        removePriorityPatient();
+    }
 }
 
 int main()
@@ -174,12 +180,16 @@ int main()
         switch (choice)
         {
         case 1:
-            printf("Enter patient's name: ");
+            printf("\nEnter patient's name: ");
             scanf("%s", name);
             printf("Enter patient's age: ");
             scanf("%d", &age);
+            if(age <10 || age >99) {
+                printf("Only AGE 10-99 allowed");
+                break;
+            }
             patient_id = registerPatient(name, age);
-            printf("Patient: %s been registered with ID: %s\n", name, age, patient_id);
+            printf("\nPatient: \"%s\" registered with ID: |%s|\n", name, patient_id);
             break;
         case 2:
             printWaitingList();
